@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from bs4 import BeautifulSoup
 import requests
+import hashlib
+import json
 import sys
 import os
 
@@ -10,11 +12,16 @@ TALON_URL = "https://talonvoice.com/dl/latest/talon-linux.tar.xz"
 
 
 def download_file(url, target):
+    h = hashlib.sha256()
+
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
         with open(target, 'wb') as f:
             for chunk in r.iter_content(chunk_size=8192):
                 f.write(chunk)
+                h.update(chunk)
+
+    return h.hexdigest()
 
 
 def get_version() -> str:
@@ -40,7 +47,14 @@ if __name__ == "__main__":
 
         version = get_version()
 
-        download_file(TALON_URL, f"artifacts/talon_linux-{version}.tar.xz")
+        sha256 = download_file(TALON_URL, f"artifacts/talon_linux-{version}.tar.xz")
+
+        with open("src.json", "w") as f:
+            f.write(json.dumps({
+                "sha256": sha256,
+                "version": version,
+            }))
+            f.write("\n")
 
     elif command == "version":
         print(get_version())

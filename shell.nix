@@ -8,5 +8,8 @@ let
   ]);
 in
 pkgs.mkShell {
-  packages = [ pythonEnv ];
+  packages = [
+    pythonEnv
+    pkgs.nixpkgs-fmt
+  ];
 }
