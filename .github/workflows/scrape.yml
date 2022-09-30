@@ -29,6 +29,7 @@ jobs:
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
+        continue-on-error: true
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./artifacts/*
@@ -36,7 +37,7 @@ jobs:
           tag: ${{ steps.vars.outputs.talon_tag }}
 
       - name: create commit
-        run: git commit -a -m "Bumped Talon"
+        run: git commit -a -m "Bumped Talon" || true
 
       - name: Push commit with updated inputs
         run: |
