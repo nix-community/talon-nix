@@ -92,7 +92,8 @@ stdenv.mkDerivation rec {
     speechd
   ];
 
-  phases = [ "unpackPhase" "installPhase" ];
+  dontBuild = true;
+  dontConfigure = true;
 
   installPhase =
     let
