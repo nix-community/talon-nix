@@ -8,6 +8,7 @@
   outputs = { self, nixpkgs, utils }:
     {
       overlays.default = import ./overlay.nix;
+      nixosModules.talon = import ./nixos;
     } //
     (utils.lib.eachDefaultSystem
       (system:
