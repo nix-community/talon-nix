@@ -119,6 +119,10 @@ stdenv.mkDerivation rec {
       EOF
 
       cp 10-talon.rules $out/etc/udev/rules.d
+      # Remove udev compatibility hack using plugdev for older debian/ubuntu
+      # This breaks NixOS usage of these rules (see https://github.com/NixOS/nixpkgs/issues/76482)
+      substituteInPlace $out/etc/udev/rules.d/10-talon.rules --replace 'GROUP="plugdev",' ""
+
       cp -r lib $out/lib
       cp talon $out/bin
       cp -r resources $out/bin/resources
