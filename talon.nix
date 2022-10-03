@@ -134,7 +134,7 @@ stdenv.mkDerivation rec {
         --unset QT_SCALE_FACTOR \
         --set   LC_NUMERIC C \
         --set   QT_PLUGIN_PATH "$out/lib/plugins" \
-        --set   LD_LIBRARY_PATH "$out/lib:$out/bin/resources/python/lib:$out/bin/resources/pypy/lib:${libPath}" \
+        --set   LD_LIBRARY_PATH "$out/bin/resources/python/lib/python3.9/site-packages/numpy.libs:$out/lib:$out/bin/resources/python/lib:$out/bin/resources/pypy/lib:${libPath}" \
         --set   QT_DEBUG_PLUGINS 1
 
       # This will fix the talon repl
