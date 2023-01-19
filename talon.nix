@@ -42,7 +42,7 @@ stdenv.mkDerivation rec {
   inherit version;
 
   src = fetchurl {
-    url = "https://github.com/nix-community/talon-nix/releases/download/${version}/talon_linux-${version}.tar.xz";
+    url = "https://talonvoice.com/dl/latest/talon-linux.tar.xz";
     inherit sha256;
   };
 

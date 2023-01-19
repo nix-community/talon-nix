@@ -27,15 +27,6 @@ jobs:
 
       - run: nix-shell --run 'python3 scrape.py download'
 
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
-        continue-on-error: true
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./artifacts/*
-          file_glob: true
-          tag: ${{ steps.vars.outputs.talon_tag }}
-
       - name: create commit
         run: git commit -a -m "Bumped Talon" || true
 
