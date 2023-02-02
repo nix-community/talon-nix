@@ -11,10 +11,15 @@ CHANGELOG_URL = "https://talonvoice.com/dl/latest/changelog.html"
 TALON_URL = "https://talonvoice.com/dl/latest/talon-linux.tar.xz"
 
 
+USER_AGENT = "nix-community scraper"
+
+
 def download_file(url, target):
     h = hashlib.sha256()
 
-    with requests.get(url, stream=True) as r:
+    headers = {"User-Agent": USER_AGENT}
+
+    with requests.get(url, stream=True, headers=headers) as r:
         r.raise_for_status()
         with open(target, 'wb') as f:
             for chunk in r.iter_content(chunk_size=8192):
