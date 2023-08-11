@@ -10,7 +10,6 @@ import os
 CHANGELOG_URL = "https://talonvoice.com/dl/latest/changelog.html"
 TALON_URL = "https://talonvoice.com/dl/latest/talon-linux.tar.xz"
 
-
 USER_AGENT = "nix-community scraper"
 
 
@@ -34,13 +33,20 @@ def get_version() -> str:
     r = requests.get(CHANGELOG_URL)
     soup = BeautifulSoup(r.text, features="lxml")
 
-    for title in soup.find_all("h2"):
+    # This is prone to breakage, as it was h2 in the past, but is now h1
+    for title in soup.find_all("h1"):
         return title.text.split(" ")[0]
 
     raise ValueError("No titles found")
 
 
 if __name__ == "__main__":
+
+    if len(sys.argv) < 2:
+        print(f"Usage: {sys.argv[0]} <command>")
+        print("  download - Download latest tarball and place info into src.json")
+        print("  version - Print the latest talon version available")
+        sys.exit(0)
 
     command = sys.argv[1]
 
