@@ -31,6 +31,8 @@
 , libinput
 , libxml2
 , speechd
+, gfortran
+, snixembed
 }:
 
 let
@@ -73,6 +75,8 @@ stdenv.mkDerivation rec {
     xorg.libxcb
     xorg.libXext
     xorg.libXcomposite
+    xorg.libXrandr
+    xorg.libXi
     bzip2
     ncurses5
     libuuid
@@ -90,6 +94,10 @@ stdenv.mkDerivation rec {
     libinput
     libxml2
     speechd
+    gfortran
+    # gfortran.cc default output contains static libraries compiled without -fPIC
+    # we want libgfortran.so instead (see: https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/science/math/giac/default.nix)
+    (lib.getLib gfortran.cc)
   ];
 
   dontBuild = true;
@@ -138,7 +146,7 @@ stdenv.mkDerivation rec {
         --unset QT_SCALE_FACTOR \
         --set   LC_NUMERIC C \
         --set   QT_PLUGIN_PATH "$out/lib/plugins" \
-        --set   LD_LIBRARY_PATH "$out/bin/resources/python/lib/python3.9/site-packages/numpy.libs:$out/lib:$out/bin/resources/python/lib:$out/bin/resources/pypy/lib:${libPath}" \
+        --set   LD_LIBRARY_PATH "$out/bin/resources/python/lib/python3.11/site-packages/numpy.libs:$out/lib:$out/bin/resources/python/lib:$out/bin/resources/pypy/lib:${libPath}" \
         --set   QT_DEBUG_PLUGINS 1
 
       # This will fix the talon repl
