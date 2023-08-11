@@ -27,7 +27,7 @@ The old system tray is gone from many window managers. This nix file includes th
 `snixembed` package which can be manually run to get the Talon tray icon
 showing up.
 
-# Can I use Talon Beta?
+## Can I use Talon Beta?
 
 The Talon Beta URLs and tarballs are private and also change across each release.
 If you want to run the Talon Beta, download a beta tarball from the URLs hosted in
