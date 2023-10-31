@@ -89,7 +89,7 @@ buildFHSEnv {
     freetype
     glib
     libGL
-    libxkbcommon_7
+    libxkbcommon
     sqlite
     zlib
     libpulseaudio
