@@ -3,6 +3,10 @@
   "extends": [
     "config:base"
   ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "extends": ["schedule:weekly"]
+  },
   "nix": {
     "enabled": true
   }
