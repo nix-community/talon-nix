@@ -51,7 +51,8 @@ let
       EOF
 
       mkdir -p $out/bin
-      ln -s $out/opt/talon $out/bin/talon
+      ln -s $out/opt/talon/talon $out/bin/talon
+      ln -s $out/opt/talon/lib $out
 
       runHook postInstall
     '';
@@ -79,7 +80,7 @@ buildFHSEnv {
     ln -s ${talon}/etc $out/etc
   '';
 
-  runScript = "talon";
+  runScript = "${talon}/bin/talon";
 
   targetPkgs = pkgs: with pkgs; [
     stdenv.cc.cc
