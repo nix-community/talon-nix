@@ -29,6 +29,28 @@ showing up.
 
 ## Can I use Talon Beta?
 
-The Talon Beta URLs and tarballs are private and also change across each release.
-If you want to run the Talon Beta, download a beta tarball from the URLs hosted in
-the `#beta` slack channel, then use the `steam-run` approach mentioned above.
+Yes, but please remember the Talon Beta URLs are meant to be kept private. You can manually override the talon-nix
+flake, but it is important that you DO NOT include the hardcoded URLs in a public repository. You should keep the URL
+private by importing a secrets repo into your config flake, and have the beta URL inside of the secret flake. However,
+this will expose the URL in the nix store, so if you are using a shared system, you will need to use some other
+approach.
+
+The following is an example of how this might look:
+
+```nix
+    nixpkgs = {
+        overlays = [
+        inputs.talon-nix.overlays.default
+        (final: prev: {
+            talon-unwrapped = prev.talon-unwrapped.overrideAttrs (oldAttrs: {
+            version = "0.4.0-359-g5c35";
+            src = builtins.fetchurl {
+                url = inputs.nix-secrets.talon-beta-url;
+                sha256 = "sha256:07ia3cnr1ayckcffr3zw6l9j3fz8ywxcxjw68ba647994s2n2zfa";
+            };
+            });
+        })
+        ];
+    };
+```
+
