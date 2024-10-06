@@ -7,22 +7,22 @@
 
   outputs = { self, nixpkgs, nix-github-actions }:
   let
-    pkgs = import nixpkgs {
-      system = "x86_64-linux";
-      config.allowUnfree = true;
-    };
+    lib = nixpkgs.lib;
+    systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ];
+    # Use to avoid accidentally introducing multiple nixpkgs: 
+    # https://discourse.nixos.org/t/using-nixpkgs-legacypackages-system-vs-import/17462/8
+    forAllSystemsPkgs = usePkgs: 
+      lib.genAttrs systems (system: usePkgs nixpkgs.legacyPackages.${system} );
+    forAllSystems = useSystem:
+      lib.genAttrs systems (system: useSystem system);
   in
   {
     overlays.default = import ./overlay.nix;
-    nixosModules.talon = import ./nixos;
-
+    nixosModules.talon = import ./modules;
+    darwinModules.talon = import ./modules;
+    checks = forAllSystems (system: {talon = self.packages.${system}.default; });
+    packages = forAllSystemsPkgs (pkgs: {default = pkgs.callPackage ./talon.nix { }; });
+    devShells = forAllSystemsPkgs (pkgs: {default = import ./shell.nix { inherit pkgs; }; });
     githubActions = nix-github-actions.lib.mkGithubMatrix { inherit (self) checks; };
-
-    checks.x86_64-linux = {
-      talon = self.packages.x86_64-linux.default;
-    };
-
-    packages.x86_64-linux.default = pkgs.callPackage ./talon.nix { };
-    devShells.x86_64-linux.default = import ./shell.nix { inherit pkgs; };
   };
 }
