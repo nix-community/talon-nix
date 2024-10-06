@@ -3,7 +3,7 @@
 , callPackage
 }:
 let
-  inherit (lib.importJson ./talon/info.json) version linux darwin;
+  inherit (lib.importJSON ./talon/info.json) version linux darwin;
   pname = "talon";
   meta = with lib; {
     homepage = "https://talonvoice.com/";
