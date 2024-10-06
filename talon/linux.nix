@@ -1,19 +1,14 @@
 { stdenv
 , buildFHSEnv
 , lib
-, fetchurl
+, fetchzip
 , meta
 , pname
 , version
 , sha256
-, meta
 }:
 
 let
-  meta = meta // {
-    platforms = with lib.platforms; linux;
-  };
-
   talon = stdenv.mkDerivation {
     pname = "talon";
     inherit version;
@@ -56,7 +51,9 @@ let
       runHook postInstall
     '';
 
-    inherit meta;
+    meta = meta // {
+      platforms = with lib.platforms; linux;
+    };
   };
 
 in

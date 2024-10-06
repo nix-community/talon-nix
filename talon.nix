@@ -20,7 +20,8 @@ let
     inherit pname version meta;
     inherit (darwin) sha256;
   };
-in if stdenv.hostPlatform.isDarwin
+in
+if stdenv.hostPlatform.isDarwin
 then darwinPkg
 else linuxPkg
 
