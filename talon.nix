@@ -3,8 +3,8 @@
 , callPackage
 }:
 let
+  inherit (lib.importJson ./talon/info.json) version linux darwin;
   pname = "talon";
-  version = "0.40.0";
   meta = with lib; {
     homepage = "https://talonvoice.com/";
     description = "Voice control application";
@@ -12,14 +12,15 @@ let
     maintainers = [ ];
     sourceProvenance = with sourceTypes; [ binaryNativeCode ];
   };
-  linux = callPackage ./talon/linux.nix {
+  linuxPkg = callPackage ./talon/linux.nix {
     inherit pname version meta;
+    inherit (linux) sha256;
   };
-  darwin = callPackage ./talon/darwin.nix {
+  darwinPkg = callPackage ./talon/darwin.nix {
     inherit pname version meta;
-    hash = "sha256-QC+LSsFy2XNg47YMN1PmUr2sxAj5K3lUf5bDThrLZ70=";
+    inherit (darwin) sha256;
   };
 in if stdenv.hostPlatform.isDarwin
-then darwin
-else linux
+then darwinPkg
+else linuxPkg
 

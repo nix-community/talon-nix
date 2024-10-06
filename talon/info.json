@@ -1,0 +1,9 @@
+{
+    "linux": {
+        "sha256": "47227d7b77ff8869cee01e669423f53e5eef03d8bb1731758ccb5661259fa8d9"
+    },
+    "darwin": {
+        "sha256": "402f8b4ac172d97360e3b60c3753e652bdacc408f92b79547f96c34e1acb67bd"
+    },
+    "version": "0.4.0"
+}

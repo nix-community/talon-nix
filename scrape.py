@@ -5,13 +5,16 @@ import hashlib
 import json
 import sys
 import os
+from enum import StrEnum, auto
+
+TALON_URL_BASE = "https://talonvoice.com/dl/latest/talon"
+class TalonUrl(StrEnum):
+    Linux = f"{TALON_URL_BASE}-linux.tar.xz"
+    Darwin = f"{TALON_URL_BASE}-mac.dmg"
 
 
 CHANGELOG_URL = "https://talonvoice.com/dl/latest/changelog.html"
-TALON_URL = "https://talonvoice.com/dl/latest/talon-linux.tar.xz"
-
 USER_AGENT = "nix-community scraper"
-
 
 def download_file(url, target):
     h = hashlib.sha256()
@@ -41,14 +44,18 @@ def get_version() -> str:
 
 
 if __name__ == "__main__":
-
-    if len(sys.argv) < 2:
-        print(f"Usage: {sys.argv[0]} <command>")
-        print("  download - Download latest tarball and place info into src.json")
-        print("  version - Print the latest talon version available")
+    exe_name = sys.argv.pop(0)
+    
+    if len(sys.argv) < 1:
+        print(
+            f'Usage: {exe_name} <command>',
+            '  download - Download latest tarball and place info into src.json',
+            '  version - Print the latest talon version available',
+            sep="\n"
+        )
         sys.exit(0)
 
-    command = sys.argv[1]
+    command = sys.argv.pop(0)
 
     if command == "download":
         try:
@@ -58,14 +65,19 @@ if __name__ == "__main__":
 
         version = get_version()
 
-        sha256 = download_file(TALON_URL, f"artifacts/talon_linux-{version}.tar.xz")
+        sha256_linux = download_file(TalonUrl.Linux, f"artifacts/talon_linux-{version}.tar.xz")
+        sha256_darwin = download_file(TalonUrl.Darwin, f"artifacts/talon_darwin-{version}.dmg")
 
-        with open("src.json", "w") as f:
-            f.write(json.dumps({
-                "sha256": sha256,
+        with open("talon/info.json", "w") as f:
+            json.dump({
+                "linux": {
+                    "sha256": sha256_linux
+                },
+                "darwin": {
+                    "sha256": sha256_darwin
+                },
                 "version": version,
-            }))
-            f.write("\n")
+            }, f, indent=4)
 
     elif command == "version":
         print(get_version())
