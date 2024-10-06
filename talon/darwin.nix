@@ -5,7 +5,7 @@
   pname,
   version,
   meta,
-  hash ? "",
+  sha256,
   undmg
 }:
 stdenvNoCC.mkDerivation {
@@ -13,7 +13,7 @@ stdenvNoCC.mkDerivation {
   src = fetchurl {
     url = "https://talonvoice.com/dl/latest/talon-mac.dmg";
     name = "Talon-${version}.dmg";
-    inherit hash;
+    inherit sha256;
   };
 
   sourceRoot = ".";

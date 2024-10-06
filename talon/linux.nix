@@ -5,7 +5,7 @@
 , meta
 , pname
 , version
-, hash ? ""
+, sha256
 , meta
 }:
 
@@ -20,7 +20,7 @@ let
 
     src = fetchzip {
       url = "https://talonvoice.com/dl/latest/talon-linux.tar.xz";
-      inherit hash;
+      inherit sha256;
     };
 
     preferLocalBuild = true;
