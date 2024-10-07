@@ -9,8 +9,8 @@ from enum import StrEnum, auto
 
 TALON_URL_BASE = "https://talonvoice.com/dl/latest/talon"
 class TalonUrl(StrEnum):
-    Linux = f"{TALON_URL_BASE}-linux.tar.xz"
-    Darwin = f"{TALON_URL_BASE}-mac.dmg"
+    linux = f"{TALON_URL_BASE}-linux.tar.xz"
+    darwin = f"{TALON_URL_BASE}-mac.dmg"
 
 
 CHANGELOG_URL = "https://talonvoice.com/dl/latest/changelog.html"
@@ -65,19 +65,15 @@ if __name__ == "__main__":
 
         version = get_version()
 
-        sha256_linux = download_file(TalonUrl.Linux, f"artifacts/talon_linux-{version}.tar.xz")
-        sha256_darwin = download_file(TalonUrl.Darwin, f"artifacts/talon_darwin-{version}.dmg")
+        info = { "version": version }
+        for talonUrl in TalonUrl:
+            last_slash = talonUrl.value.rfind("/")
+            first_period = talonUrl.value.find(".", last_slash)
+            ext = talonUrl.value[first_period:]
+            info[talonUrl.name] = { "sha256": download_file(talonUrl.value, f"artifacts/talon_{talonUrl.name}-{version}{ext}") }
 
         with open("talon/info.json", "w") as f:
-            json.dump({
-                "linux": {
-                    "sha256": sha256_linux
-                },
-                "darwin": {
-                    "sha256": sha256_darwin
-                },
-                "version": version,
-            }, f, indent=4)
+            json.dump(info, f, indent=4)
 
     elif command == "version":
         print(get_version())
