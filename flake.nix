@@ -21,8 +21,8 @@
     in
     {
       overlays.default = import ./overlay.nix;
-      nixosModules.talon = import ./modules;
-      darwinModules.talon = import ./modules;
+      nixosModules.default = import ./modules/nixos.nix;
+      darwinModules.default = import ./modules/darwin.nix;
       checks = forAllSystems (system: { talon = self.packages.${system}.default; });
       packages = forAllSystemsPkgs (pkgs: { default = pkgs.callPackage ./talon.nix { }; });
       devShells = forAllSystemsPkgs (pkgs: { default = import ./shell.nix { inherit pkgs; }; });
