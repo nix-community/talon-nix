@@ -1,7 +1,7 @@
 { stdenv
 , buildFHSEnv
 , lib
-, fetchzip
+, fetchurl
 , meta
 , pname
 , version
