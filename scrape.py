@@ -20,6 +20,7 @@ def download_file(url, target):
     h = hashlib.sha256()
 
     headers = {"User-Agent": USER_AGENT}
+    print(f'Downloading {url}')
 
     with requests.get(url, stream=True, headers=headers) as r:
         r.raise_for_status()

@@ -13,7 +13,7 @@ let
     pname = "talon";
     inherit version;
 
-    src = fetchzip {
+    src = fetchurl {
       url = "https://talonvoice.com/dl/latest/talon-linux.tar.xz";
       inherit sha256;
     };
