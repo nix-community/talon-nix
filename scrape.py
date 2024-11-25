@@ -5,18 +5,22 @@ import hashlib
 import json
 import sys
 import os
+from enum import StrEnum, auto
+
+TALON_URL_BASE = "https://talonvoice.com/dl/latest/talon"
+class TalonUrl(StrEnum):
+    linux = f"{TALON_URL_BASE}-linux.tar.xz"
+    darwin = f"{TALON_URL_BASE}-mac.dmg"
 
 
 CHANGELOG_URL = "https://talonvoice.com/dl/latest/changelog.html"
-TALON_URL = "https://talonvoice.com/dl/latest/talon-linux.tar.xz"
-
 USER_AGENT = "nix-community scraper"
-
 
 def download_file(url, target):
     h = hashlib.sha256()
 
     headers = {"User-Agent": USER_AGENT}
+    print(f'Downloading {url}')
 
     with requests.get(url, stream=True, headers=headers) as r:
         r.raise_for_status()
@@ -41,14 +45,18 @@ def get_version() -> str:
 
 
 if __name__ == "__main__":
-
-    if len(sys.argv) < 2:
-        print(f"Usage: {sys.argv[0]} <command>")
-        print("  download - Download latest tarball and place info into src.json")
-        print("  version - Print the latest talon version available")
+    exe_name = sys.argv.pop(0)
+    
+    if len(sys.argv) < 1:
+        print(
+            f'Usage: {exe_name} <command>',
+            '  download - Download latest tarball and place info into src.json',
+            '  version - Print the latest talon version available',
+            sep="\n"
+        )
         sys.exit(0)
 
-    command = sys.argv[1]
+    command = sys.argv.pop(0)
 
     if command == "download":
         try:
@@ -58,14 +66,15 @@ if __name__ == "__main__":
 
         version = get_version()
 
-        sha256 = download_file(TALON_URL, f"artifacts/talon_linux-{version}.tar.xz")
+        info = { "version": version }
+        for talonUrl in TalonUrl:
+            last_slash = talonUrl.value.rfind("/")
+            first_period = talonUrl.value.find(".", last_slash)
+            ext = talonUrl.value[first_period:]
+            info[talonUrl.name] = { "sha256": download_file(talonUrl.value, f"artifacts/talon_{talonUrl.name}-{version}{ext}") }
 
-        with open("src.json", "w") as f:
-            f.write(json.dumps({
-                "sha256": sha256,
-                "version": version,
-            }))
-            f.write("\n")
+        with open("talon/info.json", "w") as f:
+            json.dump(info, f, indent=4)
 
     elif command == "version":
         print(get_version())
