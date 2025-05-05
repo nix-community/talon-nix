@@ -112,7 +112,7 @@ buildFHSEnv {
     gdk-pixbuf
     cairo
     libdrm
-    gnome2.pango
+    pango
     gdbm
     atk
     wayland
