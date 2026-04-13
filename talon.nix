@@ -1,7 +1,8 @@
-{ stdenv
-, buildFHSEnv
-, lib
-, fetchurl
+{
+  stdenv,
+  buildFHSEnv,
+  lib,
+  fetchurl,
 }:
 
 let
@@ -69,10 +70,12 @@ buildFHSEnv {
     export LC_NUMERIC=C
     export QT_PLUGIN_PATH="/lib/plugins"
 
-    export LD_LIBRARY_PATH=${lib.concatStringsSep ":" [
-      "/opt/talon/resources/python/lib/python3.11/site-packages/numpy.libs"
-      "/opt/talon/resources/python/lib"
-    ]}
+    export LD_LIBRARY_PATH=${
+      lib.concatStringsSep ":" [
+        "/opt/talon/resources/python/lib/python3.11/site-packages/numpy.libs"
+        "/opt/talon/resources/python/lib"
+      ]
+    }
   '';
 
   extraInstallCommands = ''
@@ -82,52 +85,65 @@ buildFHSEnv {
 
   runScript = "${talon}/bin/talon";
 
-  targetPkgs = pkgs: with pkgs; [
-    stdenv.cc.cc
-    stdenv.cc.libc
-    dbus
-    fontconfig
-    freetype
-    glib
-    libGL
-    libxkbcommon
-    sqlite
-    zlib
-    libpulseaudio
-    udev
-    xorg.libX11
-    xorg.libSM
-    xorg.libXcursor
-    xorg.libICE
-    xorg.libXrender
-    xorg.libxcb
-    xorg.libXext
-    xorg.libXcomposite
-    xorg.libXrandr
-    xorg.libXi
-    bzip2
-    ncurses5
-    libuuid
-    gtk3-x11
-    gdk-pixbuf
-    cairo
-    libdrm
-    pango
-    gdbm
-    atk
-    wayland
-    wayland-protocols
-    wlroots
-    xwayland
-    libinput
-    libxml2
-    speechd
-    gfortran
-    # gfortran.cc default output contains static libraries compiled without -fPIC
-    # we want libgfortran.so instead (see: https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/science/math/giac/default.nix)
-    (lib.getLib gfortran.cc)
-    talon
-  ];
+  targetPkgs =
+    pkgs:
+    let
+      # Future proof: When xorg is fully removed the or { } branch will be used.
+      xorg = pkgs.xorg or { };
+      # Packages were moved from the xorg namespace to top-level
+      xorgPackages = [
+        (pkgs.libx11 or xorg.libX11)
+        (pkgs.libsm or xorg.libSM)
+        (pkgs.libxcursor or xorg.libXcursor)
+        (pkgs.libice or xorg.libICE)
+        (pkgs.libxrender or xorg.libXrender)
+        (pkgs.libxcb or xorg.libxcb)
+        (pkgs.libxext or xorg.libXext)
+        (pkgs.libxcomposite or xorg.libXcomposite)
+        (pkgs.libxrandr or xorg.libXrandr)
+        (pkgs.libxi or xorg.libXi)
+      ];
+    in
+    with pkgs;
+    [
+      stdenv.cc.cc
+      stdenv.cc.libc
+      dbus
+      fontconfig
+      freetype
+      glib
+      libGL
+      libxkbcommon
+      sqlite
+      zlib
+      libpulseaudio
+      udev
+    ]
+    ++ xorgPackages
+    ++ [
+      bzip2
+      ncurses5
+      libuuid
+      gtk3-x11
+      gdk-pixbuf
+      cairo
+      libdrm
+      pango
+      gdbm
+      atk
+      wayland
+      wayland-protocols
+      wlroots
+      xwayland
+      libinput
+      libxml2
+      speechd
+      gfortran
+      # gfortran.cc default output contains static libraries compiled without -fPIC
+      # we want libgfortran.so instead (see: https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/science/math/giac/default.nix)
+      (lib.getLib gfortran.cc)
+      talon
+    ];
 
   inherit meta;
 }
